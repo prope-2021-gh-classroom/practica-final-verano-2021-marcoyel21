@@ -87,6 +87,8 @@ Crear un nuevo `README.md` en la raíz de su repo colocando el tema, paquete a u
 
 Equipos 1 y 2 el lunes 5 de julio. Equipos restantes el martes 6 de julio. Ambos días nos vemos 18:00 por M. Teams.
 
+Máximo 20-25 min duración de la presentación por equipo incluyendo preguntas y respuestas.
+
 # Notas
 
 * **Deben usar [repl.it](https://repl.it/), `git` o Github para llevar la historia de cambios en la realización de sus notebooks o cualquier otro archivo y subirlos a sus repos. No se revisarán aquellos archivos que tengan un commit con todas las respuestas. El trabajo es incremental.**
