@@ -389,6 +389,8 @@ grid.arrange(a,b,c,d, ncol=2)
 
 Habiendo visto los modelos graficamente, el siguiente paso es realizar la predicción y medir el error. De manera concreta, vamos a hacer una extrapolación del número de muertes en la semana 77. Es decir, queremos, con base en nuestros modelos, predecir el número de muertos en la semana 77.
 
+En la siguiente tabla mostramos el error con respecto a la predicción de la semana 77 así como el error cuadrático medio del ajuste del modelo con respecto a todas las semanas.
+
 ```{r, interpolacion_errors}
 
 Est_p1<-polyval(p1,77)
@@ -423,8 +425,7 @@ kable(errors, booktabs=T, col.names = c("Error en decesos para semana 77","Error
   kable_styling(position = "center",latex_options = "repeat_header")
 ```
 
-De la tabla anterior concluimos que el modelo que más se acerco a las defunciones de la semana 77, que tuvo 118 defunciones fue el modelo del polinomio grado 2. Sin embargo, el modelo con el menor error cuadrático medio fue el *spline*.
-
+La semana 77 tuvo 118 defunciones, por lo cual, el modelo que mejor extrapoló nuestra observación en este caso, fue el modelo del polinomio grado 2, el cual tuvo una menor diferencia en la extrapolación.   Sin embargo, concluimos que la mejor estimación para nuestro modelo, es la del modelo del polinomio grado 6 ya que tiene un error cuadrático medio menor frente a los modelos de grado 1, 2 y 3.
 
 ## Area bajo la curva
 
