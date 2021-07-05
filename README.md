@@ -29,9 +29,9 @@ de la pandemia en México.
   - [PRESENTACIÓN](https://drive.google.com/file/d/1UK6nGuKFiVzAyPaCkHxRkrfwkJr3x7_7/view?usp=sharing)
 
 <h2> Referencias</h2>
-  - [The covid Pandemic](https://www.nytimes.com/news-event/coronavirus)  
-  - [Base de datos](1.https://datos.cdmx.gob.mx/dataset/casos-asociados-a-covid-19/resource/9984f55f-d756-4f16-9a88-12b3f78820bf?view_id=25a63a7f-9768-4a9b-8456-3cf756192a40) 
-  - [Información básica sobre COVID-19](https://www.who.int/es/emergencies/diseases/novel-coronavirus-2019/question-and-answers-hub/q-a-detail/coronavirus-disease-covid-19)
+  + [The covid Pandemic](https://www.nytimes.com/news-event/coronavirus)  
+  + [Base de datos](1.https://datos.cdmx.gob.mx/dataset/casos-asociados-a-covid-19/resource/9984f55f-d756-4f16-9a88-12b3f78820bf?view_id=25a63a7f-9768-4a9b-8456-3cf756192a40) 
+  + [Información básica sobre COVID-19](https://www.who.int/es/emergencies/diseases/novel-coronavirus-2019/question-and-answers-hub/q-a-detail/coronavirus-disease-covid-19)
   - [Número de muertes causadas por el coronavirus](https://es.statista.com/estadisticas/1095779/numero-de-muertes-causadas-por-el-coronavirus-de-wuhan-por-pais/)
   - [Contingency analysis in r](https://www.datacamp.com/community/tutorials/contingency-analysis-r)  
   - [How to extract year from date in r](https://www.marsja.se/how-to-extract-year-from-date-in-r-with-examples/#How_do_I_get_the_year_from_a_date_in_R)  
