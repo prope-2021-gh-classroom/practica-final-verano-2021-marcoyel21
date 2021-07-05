@@ -81,7 +81,9 @@ library(stargazer)
 
 Hasta el siglo XXI, los seres humanos han sido testigos de tres pandemias mortales: SARS síndrome respiratorio de Oriente Medio (MERS) y COVID-19. Todos estos virus, que son responsables de causar infecciones agudas del tracto respiratorio (IRA), son de naturaleza altamente contagiosa y/o han causado una alta mortalidad. COVID-19 apareció por primera vez en Wuhan, China, en diciembre de 2019 y se extendió rápidamente por todo el mundo.
 
-Al 02 de julio de 2021, México es el cuarto país con mayor número de defunciones acumuladas, estando por debajo de Estados Unidos, Brasil e India. De acuerdo a un informe de Statista: Estados Unidos encabeza la clasificación al superar los 620,600 decesos, seguido de Brasil con alrededor de 520.200. Para el 2 julio de 2021, había más de 183.5millones de casos confirmados de COVID-19 en todo el mundo.(2) Es importante recalcar que día con día el número de personas fallecidas en el mundo van aumentando, por lo cual, resulta imperativo seguir investigando más sobre las causas de muerte y tomar acciones preventivas para evitar defunciones alrededor del mundo.
+Además, de acuerdo con el New York Times, el covid-19 ha enfermado a más de 183 millones de personas en todo el mundo. Más de 4 millones de personas han muerto hasta el día de hoy. La pandemia de coronavirus ha afectado nuestras vidas, nuestra economía y casi todos los rincones del mundo. Con los enormes volúmenes de datos que se producen a diario, necesitamos crear información, precisa para diseñar estrategias efectivas para poder terminar con esta pandemia mundial.
+
+Al 02 de julio de 2021, México es el cuarto país con mayor número de defunciones acumuladas, estando por debajo de Estados Unidos, Brasil e India. De acuerdo a un informe de Statista: Estados Unidos encabeza la clasificación al superar los 620,600 decesos, seguido de Brasil con alrededor de 520.200. Para el 2 julio de 2021, había más de 183. 5millones de casos confirmados de COVID-19 en todo el mundo. Es importante recalcar que día con día el número de personas fallecidas en el mundo van aumentando, por lo cual, resulta imperativo seguir investigando más sobre las causas de muerte y tomar acciones preventivas para evitar defunciones alrededor del mundo.
 
 En el contexto de una crisis sanitaria como la que estamos viviendo, es fundamental que los análisis relacionados se hagan con rigor de tal manera que los hallazgos sean veraces y precisos. Esto es de especial importancia en el contexto de la divulgación de información falsa o de desinformación en redes sociales y medios de comunicación. Por ello, el proposito de esta practica final es el anlizar las bases de datos oficiales de contagios y decesos de COVID19 y aplicar los métodos vistos durante la clase con el fin de obtener hallazgos robustos, interesantes y útiles relacionados con el desarrollo de la pandemia en México.
 
@@ -615,6 +617,10 @@ En cuanto a las conclusiones puntuales de esta practica final se encontró que:
 
 + además, de acuerdo a nuestros hallazgos, el estar intubado o no estar intubado tienen una dependencia respecto a la condición de salud de las personas hospitalizadas. Esto es consistente con la información proporcionada por la OMS: las personas que padecen afecciones médicas subyacentes, como hipertensión arterial, problemas cardíacos o pulmonares, diabetes, obesidad o cáncer, corren un mayor riesgo de presentar cuadros graves.
 
+Es muy bien sabido que se conoce muy poco de esta enfermedad, por lo cual, es imperativo seguir investigando y analizando la información que existe, con el fin de aprender más sobre este virus. El labor de analizar grandes bases de datos tiene una importante tarea en esta crisis sanitaria: proveer de información confiable y procesada a la población para poder entender los riesgos y de cierta forma, aprender a minimizarlos, promoviendo una cultura de prevención y cuidado de la salud. 
+
+El análisis estadístico de los decesos de COVID-19 en México, nos da un panorama de la población que está en riesgo que fallecer según la edad y condición de salud. Nos aporta además un conocimiento sobre el tiempo que pasa una persona en promedio en el hospital antes de fallecer. Nos indica un panorama de esta enfermedad y  es un resumen en general de todo el que hay detrás de esta crisis sanitaria mundial ya que detrás de cada estadística, se encuentra la vida de una persona.
+
 \newpage
 
 
@@ -626,6 +632,8 @@ En cuanto a las conclusiones puntuales de esta practica final se encontró que:
 + Statista, 2021. Número de personas fallecidas a causa del coronavirus en el mundo al de 2 de julio de 2021, por país. Recuperado el 03 de julio de 2021  en https://es.statista.com/estadisticas/1095779/numero-de-muertes-causadas-por-el-coronavirus-de-wuhan-por-pais/
 
 + Organización Mundial de la Salud. 2021. Información básica sobre la COVID-19 Recuperado el 03 de julio de 2021  en https://www.who.int/es/emergencies/diseases/novel-coronavirus-2019/question-and-answers-hub/q-a-detail/coronavirus-disease-covid-19
+
++ [The covid Pandemic](https://www.nytimes.com/news-event/coronavirus)
 
 + [Contingency analysis in r](https://www.datacamp.com/community/tutorials/contingency-analysis-r)  
 
