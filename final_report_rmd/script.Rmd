@@ -33,6 +33,8 @@ library(kableExtra)
 library(gridExtra)
 library(pracma)
 library(RColorBrewer)
+library(GGally)
+library(stargazer)
 ```
 
 \begin{titlepage}
@@ -47,7 +49,7 @@ library(RColorBrewer)
 
 \textsc{\large }\\[1em]
 
-\textsc{\LARGE Análisis estadístico de los decesos de COVID19 en México}\\[1em]
+\textsc{\LARGE Análisis estadístico de los decesos de COVID19 en la CDMX}\\[1em]
 
 \textsc{\LARGE }\\[1em]
 
@@ -57,14 +59,14 @@ library(RColorBrewer)
 
 \textsc{\large 142244}\\[1em]
 
-\textsc{\large Rodrigo }\\[1em]
+\textsc{\large Rodrigo Juárez Jaramillo }\\[1em]
 
-\textsc{\large 142244}\\[1em]
+\textsc{\large 145804}\\[1em]
 
 \end{center}
 
 \vspace*{\fill}
-\textsc{Ciudad de México \hspace*{\fill} 2020}
+\textsc{Ciudad de México \hspace*{\fill} 2021}
 
 \end{titlepage}
 
@@ -77,7 +79,7 @@ library(RColorBrewer)
 
 # Introducción
 
-Hasta el siglo XXI, los seres humanos han sido testigos de tres pandemias mortales: SARS síndrome respiratorio de Oriente Medio (MERS) y COVID-19. Todos estos virus, que son responsables de causar infecciones agudas del tracto respiratorio (IRA), son de naturaleza altamente contagiosa y / o han causado una alta mortalidad. COVID-19 apareció por primera vez en Wuhan, China, en diciembre de 2019 y se extendió rápidamente por todo el mundo.(1)
+Hasta el siglo XXI, los seres humanos han sido testigos de tres pandemias mortales: SARS síndrome respiratorio de Oriente Medio (MERS) y COVID-19. Todos estos virus, que son responsables de causar infecciones agudas del tracto respiratorio (IRA), son de naturaleza altamente contagiosa y/o han causado una alta mortalidad. COVID-19 apareció por primera vez en Wuhan, China, en diciembre de 2019 y se extendió rápidamente por todo el mundo.
 
 Al 02 de julio de 2021, México es el cuarto país con mayor número de defunciones acumuladas, estando por debajo de Estados Unidos, Brasil e India. De acuerdo a un informe de Statista: Estados Unidos encabeza la clasificación al superar los 620,600 decesos, seguido de Brasil con alrededor de 520.200. Para el 2 julio de 2021, había más de 183.5millones de casos confirmados de COVID-19 en todo el mundo.(2) Es importante recalcar que día con día el número de personas fallecidas en el mundo van aumentando, por lo cual, resulta imperativo seguir investigando más sobre las causas de muerte y tomar acciones preventivas para evitar defunciones alrededor del mundo.
 
@@ -89,7 +91,7 @@ En el contexto de una crisis sanitaria como la que estamos viviendo, es fundamen
 
 ## Extracción
 
-Los datos con los que trabajaremos provienen de la [base de datos agregada oficial del Gobierno Federal](https://datos.cdmx.gob.mx/dataset/casos-asociados-a-covid-19/resource/9984f55f-d756-4f16-9a88-12b3f78820bf?view_id=25a63a7f-9768-4a9b-8456-3cf756192a40). Esta base de datos incluye todos los casos diarios asociados a COVID-19 que el gobierno federal ha registrado. Cuenta con contenido desagregado por sexo, edad, nacionalidad, padecimientos asociados entre otras variables.
+Los datos con los que trabajaremos provienen de la [base de datos agregada oficial del Gobierno Federal](https://datos.cdmx.gob.mx/dataset/casos-asociados-a-covid-19/resource/9984f55f-d756-4f16-9a88-12b3f78820bf?view_id=25a63a7f-9768-4a9b-8456-3cf756192a40). Esta base de datos incluye todos los casos diarios asociados a COVID-19 que se han registrado en la CDMX. Cuenta con contenido desagregado por sexo, edad, nacionalidad, padecimientos asociados entre otras variables.
 
 ```{r, extraccion}
 data<-read.csv("data.csv")
@@ -100,10 +102,11 @@ data<-read.csv("data.csv")
 En primer lugar, analizamos la clase de cada variable:
 
 ```{r, cleaning}
-lapply(data,class)
+kable(data.frame(sapply(data,class)), col.names = "Clase", booktabs=T,longtable = T)%>% 
+  kable_styling(latex_options=c("scale_down","repeat_header"),position = "center")
 ```
 
-Notamos que todas las variables pertenecen a la clase *character*, lo cual habla de que debemos clasificarlas de manera adecuada para aprovechar la información por lo que si queremos aprovechar esas variables, el siguiente paso es asignarles la clase correcta.
+Notamos que todas las variables pertenecen a la clase *character* (con expeción de la edad y los id de cada fila) lo cual habla de que debemos clasificarlas de manera adecuada para aprovechar la información por lo que si queremos aprovechar esas variables, el siguiente paso es asignarles la clase correcta. En el siguiente *chunk* clasificamos las fechas y las variables categóricas de manera correcta.
 
 ```{r, cleaning_3}
 #notamos que el formato de las fechas es AAAA/MM/DD
@@ -143,15 +146,23 @@ output_missing_data<-missing_data %>%
 filter(missing_data>0)%>%
 mutate(missing_data= missing_data*100/nrow(data))
 
-kable(output_missing_data, booktabs=T,
-      align = 'c', col.names = c("Variable","Porcentaje"),
+kable(output_missing_data, booktabs=T,col.names = c("Variable","Porcentaje"),
       caption="Valores faltantes")%>%
   kable_styling(position = "center",latex_options = "repeat_header")
 ```
 
-Lo primero que notamos es que las variables *entidad_res* y *municipio_res*, referentes a la entidad y municpio de residencia cuentan con una alta proporción de valores faltantes (la mayoría de sus valores está faltante). De igual manera, la fecha de defunción también cuenta con una alta proporción, auqnue en este caso será menos problemático pues podenmos hacer un supuesto bastante creible de que solo tienen valor aquellas personas que han perecido. En cuanto a sector y país de origen, los valores faltantes realmente son muy pocos y podemos prescindir de dichas observaciones.
+Lo primero que notamos es que las variables *entidad_res* y *municipio_res*, referentes a la entidad y municpio de residencia cuentan con una alta proporción de valores faltantes (la mayoría de sus valores está faltante). De igual manera, la fecha de defunción también cuenta con una alta proporción. En cuanto a sector y país de origen, los valores faltantes realmente son muy pocos y podemos prescindir de dichas observaciones.
+
+Nuestra primera hipótesis esque los valores faltante en *entidad_res* y *municipio_res* en realidad se refieren a personas cuya residencia está en CDMX. Nuestra segunda hipótesis (que convertiremos en supuesto para poder trabajar) esque los valores faltantes en la fecha de defunción corresponden a personas que no han perecido.
+
+```{r, cleaning_4}
+#como podemos observar no hay CDMX
+summary(factor(data$entidad_res))
+```
 
 ## Creación de variables de interés 
+
+Asimismo podemos crear algunas variables de interés que nos serán muy útiles en el análisis: días desde el primer sintoma a la hospitalización y días desde la hospitalización hasta el decesos (en caso de)
 
 ```{r, features}
 ##time to hospital
@@ -165,6 +176,7 @@ data$tiempo_to_death<-as.numeric(data$tiempo_to_death)
 ##time from infection to death
 data<-data %>% mutate(tiempo_inf_death=fecha_def-fecha_sintomas)
 data$tiempo_inf_death<-as.numeric(data$tiempo_inf_death)
+
 ```
 
 
@@ -172,18 +184,25 @@ data$tiempo_inf_death<-as.numeric(data$tiempo_inf_death)
 
 De la extracción y limpieza podemos concluir que:
 
-+ No podemos aprovechar de la mejor manera los datos referentes a la localización geográfica pues son muchísimos *missing values* y una estrategia de imputación correcta va más allá de los objetivos y alcances del curso.
++ Existen muchos *missing values* en cuanto a las variables geográficas que muy probablemente se refieren a gente habitante de la CDMX.
+
++ Existen muchos *missing values* en cuanto a la fecha de deceso pero probablemente es porque es gente que no ha perecido.
 
 + La mayoría de las variables con categóricas y las observaciones son a nivel individuo.
 
-+ Convertimos las variables de fecha y categóricas al formato correcto
++ Convertimos las variables de fecha y categóricas al formato correcto.
 
 # EDA
 
 En esta parte realizaremos un análisis exploratorio de las principales variables de interés.
 
-```{r, eda1}
+## Género
 
+Lo que notamos en género es que los decesos han sido más en los hombres, aunque las distribuciones se parezcan, notamos que las medias son ligeramente distintas: la de mujeres parece ser en mayor edad y su distribución parece tener una cola más larga hacia la izquierda y una cola con mayor pendiente hacia la derecha con respecto a la distribución de los hombres.
+
+
+```{r, genero}
+#data wrangling
 df8$fecha_def<-format(df8$fecha_def, format="%V")
 df8["def"] <- 1
 df9<-subset(df8, fecha_def!="NA")
@@ -191,12 +210,16 @@ df10<-df9%>%
   group_by(sexo, edad) %>%
   summarise(sum_def = sum(def, na.rm = TRUE))
 
-
+#plot
 ggplot(df10, aes(x=edad,y=sum_def, fill=factor(sexo))) +
     geom_bar(stat="identity") +
   ggtitle("Decesos por género")+ ylab("Decesos")
 
 ```
+
+## Comorbidades
+
+En cuanto a comorbidades vemos algunas relaciones muy interesantes: notamos que la hipertensión y diabetes son prevalentes en los decesos (con casi el 40% el 33%). De manera secundaría la obesidad y el tabaquismo aparecen en el 21% y 12% de los decesos aproximadamente.
 
 ```{r, eda2}
 
@@ -220,8 +243,27 @@ barplot(height=data2$value, names=data2$name,
 ```
 
 
+## Tiempos
 
-## Estadística descriptiva 
+En cuanto a los tiempos, notamos pasa hasta una semana desde le primer sintoma hasta la hospitalización. En cuanto a decesos, notamos que estos ocurren desde el segundo día de la hospitalización
+```{r, timing}
+times<-data %>% select(tiempo_enf_to_hosp,tiempo_to_death)
+
+a<-ggplot(times, aes(x=tiempo_enf_to_hosp)) + 
+  geom_histogram(binwidth=1) +
+  ggtitle("Tiempo desde primer sintoma hasta hospitalización")+ xlab("Días") + xlim(0, 20)+ ylim(0, 50000)
+
+b<-ggplot(times, aes(x=tiempo_to_death)) + 
+  geom_histogram(binwidth=1) +
+  ggtitle("Tiempo desde hospitalización hasta deceso")+ xlab("Días") + xlim(0, 20)+ ylim(0, 7000)
+
+grid.arrange(a,b,ncol=1)
+```
+
+
+## Variables acumuladas
+
+En cuanto a las variables acumuladas (decesos, hospitalizaciones y enfermos), notamos que las 3 tienen un punto de inflexión aproximadamente en diciembre 2020. Asimismo notamos que la curva de decesos es la que se ha mostrado menos sensible de las 3. Asimismo notamos que las 3 curvas tienen pequeñas tiras blancas, estas representan los días que no se recopilan datos o bien los días de corte, por ejemplo, probablemente los fines de semana para los decesos.
 
 ```{r, eda3}
 sintomas<-data%>% 
@@ -253,6 +295,8 @@ c<-ggplot(data=ingreso, aes(x=fecha_ingreso, y=cum)) +
 
 grid.arrange(a,b,c,ncol=1)
 ```
+
+## Decesos por semana
 
 ```{r, defunciones_semana}
 year_def <-format(data$fecha_def, format="%Y") #Obtenemos los años de las fechas
@@ -292,21 +336,24 @@ Lo que notamos principalmente esque la distribución de las muertes por semana e
 Esto es más evidente si usamos un qqplot contrastando contra la distribución normal.
 
 ```{r, defunciones_semana_plor2}
-qqnorm(df6$muertes)
+qqnorm(df6$muertes, main= "Decesos por semana frente a la distribución normal")
 qqline(df6$muertes, col = "red")
 ```
 
 # Aplicación de herramientas de clase
 
-## Interpolación
+## Interpolación, modelado y error
 
-La primeras herramientas que usaremos serán aquellas de interpolación. En esta sección probaremos distintos modelos con polinomios de distinto grado con el fin de encontrar aquel que logre la predicción de los decesos de la última semana con el menor error cuadrático medio.
+La primeras herramientas que usaremos serán aquellas de interpolación. En esta sección probaremos distintos modelos con polinomios de distinto grado con el fin de encontrar aquel que logre la predicción de los decesos de la última semana con el menor error cuadrático medio. El objetivo es poder ajustar un modelo de manera exitosa a la curva de decesos semanales que se presenta a continuación.
 
 ```{r, interpolacion_plot}
 
 ggplot(df6) + geom_point(aes(x=semana,y=muertes, color=anio))+ggtitle("Decesos semanales")
 
 ```
+
+A continuación se muestran los ajustes polinomiales:
+
 ```{r, interpolacion_polys}
 
 x1<-df6$semana
@@ -318,19 +365,23 @@ p6<-polyfit(x1,y1,6) #polinomio grado 6
 
 #interpolación grado 1
 df6$approx1 <-polyval(p1,x1)
-a<-ggplot(df6) + geom_point(aes(x=semana,y=muertes, color=anio))+geom_smooth(aes(x=semana,y=approx1))
+a<-ggplot(df6) + geom_point(aes(x=semana,y=muertes, color=anio))+
+  geom_smooth(aes(x=semana,y=approx1))+ggtitle("Grado 1")
 
 #interpolación grado 2
 df6$approx2 <-polyval(p2,x1)
-b<-ggplot(df6) + geom_point(aes(x=semana,y=muertes, color=anio))+geom_smooth(aes(x=semana,y=approx2))
+b<-ggplot(df6) + geom_point(aes(x=semana,y=muertes, color=anio))+
+  geom_smooth(aes(x=semana,y=approx2))+ggtitle("Grado 2")
 
 #interpolación grado 3
 df6$approx3 <-polyval(p3,x1)
-c<-ggplot(df6) + geom_point(aes(x=semana,y=muertes, color=anio))+geom_smooth(aes(x=semana,y=approx3))
+c<-ggplot(df6) + geom_point(aes(x=semana,y=muertes, color=anio))+
+  geom_smooth(aes(x=semana,y=approx3))+ggtitle("Grado 3")
 
 #interpolación grado 6
 df6$approx6 <-polyval(p6,x1)
-d<-ggplot(df6) + geom_point(aes(x=semana,y=muertes, color=anio))+geom_smooth(aes(x=semana,y=approx6))
+d<-ggplot(df6) + geom_point(aes(x=semana,y=muertes, color=anio))+
+  geom_smooth(aes(x=semana,y=approx6))+ggtitle("Grado 6")
 
 
 grid.arrange(a,b,c,d, ncol=2)
@@ -367,13 +418,13 @@ mse<-c(ECM_p1,ECM_p2,ECM_p3,ECM_p6)
 #creo dataframe con errores
 errors<-data.frame(abs_errors,mse)
 #output de tabla de errores
-kable(errors, booktabs=T,
-      align = 'c', col.names = c("Error en decesos para semana 77","Error cuadrático medio general"),
+kable(errors, booktabs=T, col.names = c("Error en decesos para semana 77","Error cuadrático medio general"),
       caption="Comparación de modelos")%>%
   kable_styling(position = "center",latex_options = "repeat_header")
 ```
 
 De la tabla anterior concluimos que el modelo que más se acerco a las defunciones de la semana 77, que tuvo 118 defunciones fue el modelo del polinomio grado 2. Sin embargo, el modelo con el menor error cuadrático medio fue el *spline*.
+
 
 ## Area bajo la curva
 
@@ -426,7 +477,13 @@ El error relativo de nuestra estimación de defunciones totales es del 4.5347%
 
 ### Contingency Analysis
 
-Existe la hipótesis que una persona es intubada si presenta cierto tipo de condiciones: asma, diabetes, epoc, etc. Para un nivel de significancia de .05, vamos a rechazar o aceptar la hipótesis de independencia de estas variables
+Existe la hipótesis que una persona es intubada si presenta cierto tipo de condiciones: asma, diabetes, epoc, etc. Para un nivel de significancia de .05, vamos a rechazar o aceptar la hipótesis de independencia de estas variables.
+
+Formalmente:
+
+$$H_0: \text{las dos variables son independientes(estar intubado y estado de salud)}$$
+
+$$H_1: \text{las dos variables no son independientes}$$
 
 ```{r, ht}
 df10<-subset(df8, intubado!='NO APLICA')
@@ -454,10 +511,9 @@ chi_test
 El valor p es menor que el nivel de significancia (0.05). Por tanto, podemos rechazar la hipótesis nula y concluir que las dos variables (estar intubado y condición médica) no son independientes.
 
 
-
 ### Letalidad por tipo de hospital
 
-¿Existe un efecto diferenciado de la mortalidad frente al imss, isste e institución privada?
+La segunda prueba que realizaremos es probar si xiste un efecto diferenciado de la letalidad dependiendo la institución donde se hospitalizó a la persona. A continuación se muestran las tasas de letalidad por tipo de institución de salud.
 
 ```{r, ht4}
 
@@ -478,8 +534,11 @@ group_by(sector) %>%
 summarize(count_dths=n())
 
 #match
-(letalidad<-merge(death_by_hospital,people_by_hospital, by="sector") %>% 
- mutate(letalidad=count_dths/count_pplo))
+letalidad<-merge(death_by_hospital,people_by_hospital, by="sector") %>% 
+ mutate(letalidad=count_dths/count_pplo)
+
+kable(letalidad, col.names = c("Sector","Decesos","Personas atendidas","Tasa de letalidad"), booktabs=T) %>%
+  kable_styling(position = "center")
 
 ##letalidad global
 (global_letality<-sum(letalidad$count_dths)/sum(letalidad$count_pplo))
@@ -490,19 +549,18 @@ Para averiguar probaremos la siguiente hipotesis
 
 ¿Es letalidad en el sector j mayor a la letalidad del país?
 
-$H_n: \mu_j=.091$
+$$H_n: \mu_j=.091$$
 
-$H_a: \mu_j > .091$
+$$H_a: \mu_j > .091$$
 
 Para la prueba de hipótesis asumiremos que la distribución de deceso es binomial y partiendo de eso aprovecharemos el teorema del limite central poder realizar las pruebas de hipotesis con base en el estadístico Z.
 
-$Z=\frac{p-n\pi}{\sqrt{n\pi(1-\pi)}}$
+$$Z=\frac{p-n\pi}{\sqrt{n\pi(1-\pi)}}$$
 
 donde $p=$ letalidad $\cdot n$
 
 
 ```{r, ht5}
-
 letalidad<-letalidad %>% 
 mutate (esperanza=count_pplo*letalidad ,st_let = sqrt(count_pplo*(1-letalidad)))%>% 
 mutate(z = (letalidad*count_pplo-global_letality*count_pplo)/sqrt(global_letality*count_pplo*(1-global_letality)))
@@ -511,36 +569,86 @@ limit<-qnorm(.995,0,1) # for alpha=.01 one talied
 letalidad<-
 letalidad %>% mutate(prueba=ifelse(z>limit,"Se rechaza H0", "No se rechaza H0"))
 
-letalidad %>% select (sector, z, prueba)
+z_test<-letalidad %>% select (sector, z, prueba)
+
+kable(z_test, col.names = c("Sector", "Z", "Conclusión"), booktabs=T) %>%
+  kable_styling(position = "center")
 ```
 
+## Correlaciones y regresión lineal 
 
+Finalmente, construiremos un modelo lineal para ver el impacto que tiene cada comorbidad en la probabilidad de perecer devido al COVID19. Primero analizamos la correlación de las variables que usaremos para construir el modelo.
+
+```{r, corr}
+df8 <-df8 %>% mutate(deceso=ifelse(is.na(fecha_def),0,1))
+cor_data<-df8 %>% select(deceso,edad,diabetes,epoc,asma,inmusupr,hipertension,obesidad,renal_cronica,tabaquismo)
+ggcorr(cor_data)
+
+```
+
+Notamos que la edad está altamente correlaciando con la ocurrencia del deceso; la presencia de asma y de tabaquismo, sorprendentemente, no están tan correlacioandos; el resto de las variables está medianamente correlacionado. Asimismo notamos la fuerte correlación entre edad e hipertensión y diabetes e hipertensión.
+
+Con base en estos hallazgos, construimos un modelo de probabilidad lineal para evaluar la probabilidad de morir dependiendo cada comorbidad. En la siguietne tabla mostramos los resultados, cada coeficiente se interpreta como: la presencia de dicha comorbidad en presencia de las demas condiciones (*ceteris paribus*) incrementa la probabilidad de morir por COVID19 una vez infectado en $\beta_i \cdot 100$ puntos porcentuales. Asimismo, en cuanto a la edad, un año adicional incrementa la probabilidad de morir una vez infectado en $\beta_{edad}\cdot 100$ puntos porcentuales.
+
+```{r, lineal, results='asis'}
+model<-lm(deceso~.,data=cor_data)
+stargazer(model, type="latex")
+```
+
+\newpage
 # Conclusiones
 
-Respecto a la mortalidad de la enfermedad respecto al sexo de las personas, nos indica que los hombres tienen una mayor defunción absoluta en el rango de edad de 58 a 73, mientras que las mujeres es en el rango de edad de 60 a 75 años. 
-De acuerdo con los resultados, de las personas fallecidas por COVID-19, el 39.4% sufría de hipertensión, el 33.8% de diabetes y el 20.12% tenía obesidad. El 7.3% de las personas fallecidas tenían una condición renal crónica. Además, de acuerdo a nuestros hallazgos, el estar intubado o no estar intubado tienen una dependencia respect a la condición de salud de las personas hospitalizadas. Esto es consistente con la información proporcionada por la OMS: las personas que padecen afecciones médicas subyacentes, como hipertensión arterial, problemas cardíacos o pulmonares, diabetes, obesidad o cáncer, corren un mayor riesgo de presentar cuadros graves.
+En cuanto a las conclusiones puntuales de esta practica final se encontró que:
+
++ la presencia de diabetes, enfermedad renal crónica y epoc están altamente correlacionadas con la muerte por COVID19 una vez infectado en presencia de otras comorbidades.
+
++ la presencia de hipertensión está altamente correlacionada con la edad y con la presencia diabetes
+
++ los hospitales del sector ESTATAL,IMSS,ISSSTE, PEMEX y SEDENA presentan una tasa de letalidad mayor a la del país de manera estadísticamente significativa.
+
++ las curvas de decesos, hospitalizaciones y contagios acumulados cuenta con el mismo punto de inflexión alrededor de diciembre del año pasado, sin embargo, la de decesos es la curva menos sensible de las 3.
+
++ respecto a la mortalidad de la enfermedad respecto al sexo de las personas, nos indica que los hombres tienen una mayor defunción absoluta en el rango de edad de 58 a 73, mientras que las mujeres es en el rango de edad de 60 a 75 años. 
+
++ de acuerdo con los resultados, de las personas fallecidas por COVID-19, el 39.4% sufría de hipertensión, el 33.8% de diabetes y el 20.12% tenía obesidad. El 7.3% de las personas fallecidas tenían una condición renal crónica. 
+
++ además, de acuerdo a nuestros hallazgos, el estar intubado o no estar intubado tienen una dependencia respecto a la condición de salud de las personas hospitalizadas. Esto es consistente con la información proporcionada por la OMS: las personas que padecen afecciones médicas subyacentes, como hipertensión arterial, problemas cardíacos o pulmonares, diabetes, obesidad o cáncer, corren un mayor riesgo de presentar cuadros graves.
+
+\newpage
 
 
 # Fuentes
 
 
-	•	Khan M, Adil SF, Alkhathlan HZ, Tahir MN, Saif S, Khan M, Khan ST. COVID-19: A Global Challenge with Old History, Epidemiology and Progress So Far. Molecules. 2020. Recuperado el 03 de julio de 2021 en https://pubmed.ncbi.nlm.nih.gov/33374759/
++ Khan M, Adil SF, Alkhathlan HZ, Tahir MN, Saif S, Khan M, Khan ST. COVID-19: A Global Challenge with Old History, Epidemiology and Progress So Far. Molecules. 2020. Recuperado el 03 de julio de 2021 en https://pubmed.ncbi.nlm.nih.gov/33374759/
 	
-	•	Statista, 2021. Número de personas fallecidas a causa del coronavirus en el mundo al de 2 de julio de 2021, por país. Recuperado el 03 de julio de 2021  en https://es.statista.com/estadisticas/1095779/numero-de-muertes-causadas-por-el-coronavirus-de-wuhan-por-pais/
++ Statista, 2021. Número de personas fallecidas a causa del coronavirus en el mundo al de 2 de julio de 2021, por país. Recuperado el 03 de julio de 2021  en https://es.statista.com/estadisticas/1095779/numero-de-muertes-causadas-por-el-coronavirus-de-wuhan-por-pais/
 
-	•	Organización Mundial de la Salud. 2021. Información básica sobre la COVID-19 Recuperado el 03 de julio de 2021  en https://www.who.int/es/emergencies/diseases/novel-coronavirus-2019/question-and-answers-hub/q-a-detail/coronavirus-disease-covid-19
++ Organización Mundial de la Salud. 2021. Información básica sobre la COVID-19 Recuperado el 03 de julio de 2021  en https://www.who.int/es/emergencies/diseases/novel-coronavirus-2019/question-and-answers-hub/q-a-detail/coronavirus-disease-covid-19
 
-[Contingency analysis in r](https://www.datacamp.com/community/tutorials/contingency-analysis-r)  
-[How to extract year from date in r](
++ [Contingency analysis in r](https://www.datacamp.com/community/tutorials/contingency-analysis-r)  
+
++ [How to extract year from date in r](
 https://www.marsja.se/how-to-extract-year-from-date-in-r-with-examples/#How_do_I_get_the_year_from_a_date_in_R)  
-[Delete or drop rows in r](https://www.datasciencemadesimple.com/delete-or-drop-rows-in-r-with-conditions-2/)  
-[How to add new columns in r](https://stackoverflow.com/questions/19508256/how-to-add-new-column-to-an-dataframe-to-the-front-not-end)  
-[Aggregating and analyzing data with dplyr](https://datacarpentry.org/R-genomics/04-dplyr.html)  
-[Integrate function](https://www.rdocumentation.org/packages/stats/versions/3.6.2/topics/integrate)
-[From String to double](https://stackoverflow.com/questions/26734913/r-converting-from-string-to-double)  
-[polyfit, polyval en R](https://www.youtube.com/watch?v=ZQJO8mlhj7A)  
-[Gauss Legendre](https://www.rdocumentation.org/packages/pracma/versions/1.9.9/topics/gaussLegendre)  
-[Spline Function](https://astrostatistics.psu.edu/su07/R/html/stats/html/splinefun.html)  
-[How to change the code ues to 1 in r](https://www.tutorialspoint.com/how-to-change-the-code-yes-to-1-in-an-r-data-frame-column)  
-[Replace NA values with zeros](https://stackoverflow.com/questions/8161836/how-do-i-replace-na-values-with-zeros-in-an-r-dataframe)  
-[Options of barplot](https://www.r-graph-gallery.com/209-the-options-of-barplot.html#color)
+
++ [Delete or drop rows in r](https://www.datasciencemadesimple.com/delete-or-drop-rows-in-r-with-conditions-2/)  
+
++ [How to add new columns in r](https://stackoverflow.com/questions/19508256/how-to-add-new-column-to-an-dataframe-to-the-front-not-end)  
+
++ [Aggregating and analyzing data with dplyr](https://datacarpentry.org/R-genomics/04-dplyr.html)  
+
++ [Integrate function](https://www.rdocumentation.org/packages/stats/versions/3.6.2/topics/integrate)
+
++ [From String to double](https://stackoverflow.com/questions/26734913/r-converting-from-string-to-double)  
+
++ [polyfit, polyval en R](https://www.youtube.com/watch?v=ZQJO8mlhj7A)  
+
++ [Gauss Legendre](https://www.rdocumentation.org/packages/pracma/versions/1.9.9/topics/gaussLegendre)  
+
++ [Spline Function](https://astrostatistics.psu.edu/su07/R/html/stats/html/splinefun.html)  
+
++ [How to change the code ues to 1 in r](https://www.tutorialspoint.com/how-to-change-the-code-yes-to-1-in-an-r-data-frame-column)  
+
++ [Replace NA values with zeros](https://stackoverflow.com/questions/8161836/how-do-i-replace-na-values-with-zeros-in-an-r-dataframe) 
+
++ [Options of barplot](https://www.r-graph-gallery.com/209-the-options-of-barplot.html#color)
