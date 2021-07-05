@@ -62,4 +62,4 @@ de la pandemia en México.
   - [Replace NA values with zeros](https://stackoverflow.com/questions/8161836/how-do-i-replace-na-values-with-zeros-in-an-r-dataframe)  
   
   - [Options of barplot](https://www.r-graph-gallery.com/209-the-options-of-barplot.html#color)
-  -
+  
