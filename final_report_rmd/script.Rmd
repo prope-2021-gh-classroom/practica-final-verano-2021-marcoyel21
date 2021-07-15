@@ -591,7 +591,7 @@ ggcorr(cor_data)
 
 Notamos que la edad está altamente correlaciando con la ocurrencia del deceso; la presencia de asma y de tabaquismo, sorprendentemente, no están tan correlacioandos; el resto de las variables está medianamente correlacionado. Asimismo notamos la fuerte correlación entre edad e hipertensión y diabetes e hipertensión.
 
-Con base en estos hallazgos, construimos un modelo de probabilidad lineal para evaluar la probabilidad de morir dependiendo cada comorbidad. En la siguietne tabla mostramos los resultados, cada coeficiente se interpreta como: la presencia de dicha comorbidad en presencia de las demas condiciones (*ceteris paribus*) incrementa la probabilidad de morir por COVID19 una vez infectado en $\beta_i \cdot 100$ puntos porcentuales. Asimismo, en cuanto a la edad, un año adicional incrementa la probabilidad de morir una vez infectado en $\beta_{edad}\cdot 100$ puntos porcentuales.
+Con base en estos hallazgos, construimos un modelo lineal para evaluar la frecuencia de morir dependiendo de las distintas comorbidades. En la siguietne tabla mostramos los resultados, cada coeficiente se interpreta como: la presencia de dicha comorbidad en presencia de las demas condiciones (*ceteris paribus*) incrementó la frecuencia de morir por COVID19 una vez infectado en $\beta_i \cdot 100$ puntos porcentuales. Asimismo, en cuanto a la edad, un año adicional incrementó la frecuencia de morir una vez infectado en $\beta_{edad}\cdot 100$ puntos porcentuales.
 
 ```{r, lineal, results='asis'}
 model<-lm(deceso~.,data=cor_data)
